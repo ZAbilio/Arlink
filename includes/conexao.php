@@ -12,11 +12,8 @@ PDO::ATTR_EMULATE_PREPARES => false,
 ];
  
 try {
-$pdo = new PDO($dsn, $user, $pass, $options);
- 
-echo "Conectado com sucesso ao banco ARLINK!";
- 
+    $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
-die("Erro ao conectar ao banco de dados: " . $e->getMessage());
+    die("Erro ao conectar ao banco de dados: " . $e->getMessage());
 }
 ?>
