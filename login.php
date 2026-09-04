@@ -59,7 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-   
+
+    <div class="pagina-login">
         <section class="login">
             <h1>ARLINK</h1>
             <p>Gestão de manutenções de ar-condicionado</p>
@@ -99,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <button type="submit">Entrar</button>
             </form>
         </section>
-   
+    </div>
+
 </body>
 </html>
