@@ -56,51 +56,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <title>Login | ARLINK</title>
 
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
-    <div class="pagina-login">
-        <section class="login">
-            <h1>ARLINK</h1>
-            <p>Gestão de manutenções de ar-condicionado</p>
+<div class="container">
 
-            <?php if ($erro !== ''): ?>
-                <p role="alert">
-                    <?php echo htmlspecialchars($erro, ENT_QUOTES, 'UTF-8'); ?>
-                </p>
-            <?php endif; ?>
+    <div class="login">
 
-            <form action="login.php" method="POST">
-                <div>
-                    <label for="email">E-mail</label>
+        <h1>ARLINK</h1>
+        <p>Gestão de manutenções de ar-condicionado</p>
 
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value="<?php echo htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?>"
-                        autocomplete="email"
-                        required
-                    >
-                </div>
+        <?php if ($erro !== ''): ?>
+            <p>
+                <?php echo htmlspecialchars($erro, ENT_QUOTES, 'UTF-8'); ?>
+            </p>
+        <?php endif; ?>
 
-                <div>
-                    <label for="senha">Senha</label>
+        <form action="login.php" method="POST">
 
-                    <input
-                        type="password"
-                        id="senha"
-                        name="senha"
-                        autocomplete="current-password"
-                        required
-                    >
-                </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <input 
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-control"
+                    value="<?php echo htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?>"
+                    required
+                >
+            </div>
 
-                <button type="submit">Entrar</button>
-            </form>
-        </section>
+            <div class="mb-3">
+                <label for="senha" class="form-label">Senha</label>
+                <input 
+                    type="password"
+                    id="senha"
+                    name="senha"
+                    class="form-control"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                ENTRAR
+            </button>
+
+        </form>
+
     </div>
 
+</div>
+
 </body>
+
+  
 </html>
