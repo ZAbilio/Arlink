@@ -1,7 +1,7 @@
 body {
     margin: 0;
     min-height: 100vh;
-    background: linear-gradient(135deg, #73a9ac, #3448ff);
+    background: linear-gradient(135deg, #55d9df, #ff4cdb);
 }
 
 .container {
@@ -43,4 +43,88 @@ body {
     font-size: 22px;
     font-weight: bold;
     border-radius: 12px;
+}
+
+/* ==== TEMA BRANCO E AZUL ==== */
+:root{
+  --azul:#2f83f5;
+  --azul-escuro:#0f3a68;
+  --azul-claro:#eaf2ff;
+  --borda:#d9e6f9;
+}
+
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:#fff;
+  color:var(--azul-escuro);
+  line-height:1.6;
+  padding:24px;
+}
+
+h1,h2,h3{color:var(--azul-escuro)}
+a{color:var(--azul)}
+
+/* barra do topo */
+.topo{
+  background:var(--azul);
+  color:#fff;
+  padding:16px 20px;
+  border-radius:10px;
+  font-weight:bold;
+}
+
+/* botão */
+.btn{
+  background:var(--azul);
+  color:#fff;
+  border:none;
+  padding:12px 22px;
+  border-radius:8px;
+  font-size:15px;
+  cursor:pointer;
+}
+.btn:hover{background:var(--azul-escuro)}
+
+/* caixa / card */
+.card{
+  background:#fff;
+  border:1px solid var(--borda);
+  border-left:5px solid var(--azul);
+  border-radius:10px;
+  padding:20px;
+  margin:16px 0;
+}
+
+/* campos do formulário */
+input, textarea, select{
+  width:100%;
+  padding:11px;
+  border:1px solid var(--borda);
+  border-radius:8px;
+  background:var(--azul-claro);
+  font-size:15px;
+  margin-bottom:12px;
+  box-sizing:border-box;
+}
+input:focus, textarea:focus{
+  outline:none;
+  border-color:var(--azul);
+  background:#fff;
+}
+
+/* tabela */
+table{width:100%;border-collapse:collapse}
+th{background:var(--azul);color:#fff;padding:10px;text-align:left}
+td{padding:10px;border-bottom:1px solid var(--borda)}
+tr:nth-child(even) td{background:var(--azul-claro)}
+
+/* rodapé */
+.rodape{
+  background:var(--azul-escuro);
+  color:#fff;
+  text-align:center;
+  padding:16px;
+  border-radius:10px;
+  margin-top:24px;
 }

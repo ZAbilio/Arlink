@@ -1,4 +1,4 @@
-<?php header('location: login.php'); ?>
+<?php //header('location: login.php'); ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -13,6 +13,8 @@
     <section>
         <h1>ARLINK - Página Inicial</h1>
         <p>Gestão de manutenções de ar-condicionado</p>
+
+        <h1> <a href="./clientes.php"> Link para clientes </a></h1>
     </section>
 </body>
 </html>
