@@ -1,7 +1,6 @@
 <?php
 require_once 'includes/conexao.php';
 
-// Busca todos os aparelhos
 $sql = "SELECT id, cliente, marca, modelo, tipo, capacidade_btu, numero_serie, data_instalacao, data_garantia, criado_em
         FROM aparelhos
         ORDER BY id DESC";

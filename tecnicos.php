@@ -1,7 +1,6 @@
 <?php
 require_once 'includes/conexao.php';
 
-// Busca todos os técnicos
 $sql = "SELECT id, nome, telefone, email, endereco, cidade, criado_em
         FROM tecnicos
         ORDER BY id DESC";
@@ -55,10 +54,7 @@ if (!$resultado) {
                             <th>Nome</th>
                             <th>Telefone</th>
                             <th>E-mail</th>
-                            <th>Endereço</th>
-                            <th>Cidade</th>
-                            <th>Cadastro</th>
-                            <th>Ações</th>
+                            <th>Criado em</th>
                         </tr>
                     </thead>
 
@@ -89,23 +85,6 @@ if (!$resultado) {
                                     : '-';
                                 ?>
                             </td>
-
-                            <td>
-                                <?php
-                                echo !empty($tecnico['endereco'])
-                                    ? htmlspecialchars($tecnico['endereco'])
-                                    : '-';
-                                ?>
-                            </td>
-
-                            <td>
-                                <?php
-                                echo !empty($tecnico['cidade'])
-                                    ? htmlspecialchars($tecnico['cidade'])
-                                    : '-';
-                                ?>
-                            </td>
-
                             <td>
                                 <?php
                                 echo date(
@@ -116,7 +95,6 @@ if (!$resultado) {
                             </td>
 
                             <td class="acoes">
-
                                 <a
                                     href="tecnico_editar.php?id=<?php echo $tecnico['id']; ?>"
                                     class="btn btn-editar"
@@ -146,7 +124,7 @@ if (!$resultado) {
 
                 <div class="vazio">
                     <h3>Nenhum técnico cadastrado</h3>
-                    <p>Comece cadastrando um novo técnico.</p>
+                    <p>Comece se cadastrando.</p>
                 </div>
 
             <?php endif; ?>

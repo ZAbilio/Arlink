@@ -12,7 +12,6 @@ if (!$resultado) {
     die("Erro ao buscar manutenções: " . mysqli_error($conexao));
 }
 
-// Mapeia o status para a classe do selo colorido
 function classeStatus($status) {
     switch (strtolower($status)) {
         case 'agendado':
