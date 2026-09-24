@@ -1,31 +1,27 @@
 <?php
 require_once 'includes/conexao.php';
 
-// Busca todas as manutenções
-$sql = "SELECT id, cliente, equipamento, tipo_servico, tecnico, data_manutencao, status, criado_em
-        FROM manutencoes
-        ORDER BY id DESC";
+// Busca todas as manutenções, trazendo nomes via JOIN (a tabela só guarda os IDs)
+$sql = "SELECT 
+            m.id,
+            c.nome AS cliente,
+            CONCAT(a.marca, ' - ', a.modelo) AS equipamento,
+            m.tipo_servico,
+            t.nome AS tecnico,
+            m.data_atendimento,
+            m.valor_cobrado,
+            m.proxima_visita,
+            m.criado_em
+        FROM manutencoes m
+        INNER JOIN aparelhos a ON m.aparelho_id = a.id
+        INNER JOIN clientes c ON a.cliente_id = c.id
+        INNER JOIN tecnicos t ON m.tecnico_id = t.id
+        ORDER BY m.id DESC";
 
 $resultado = mysqli_query($conexao, $sql);
 
 if (!$resultado) {
     die("Erro ao buscar manutenções: " . mysqli_error($conexao));
-}
-
-function classeStatus($status) {
-    switch (strtolower($status)) {
-        case 'agendado':
-            return 'status-agendado';
-        case 'em andamento':
-            return 'status-andamento';
-        case 'concluído':
-        case 'concluido':
-            return 'status-concluido';
-        case 'cancelado':
-            return 'status-cancelado';
-        default:
-            return '';
-    }
 }
 ?>
 
@@ -37,7 +33,143 @@ function classeStatus($status) {
 
     <title>Manutenções - AR Link</title>
 
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+
+        .topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .topo h1 {
+            color: #1e3a5f;
+            font-size: 28px;
+        }
+
+        .btn-novo {
+            background: #198754;
+            color: white;
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .btn-novo:hover {
+            background: #157347;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .tabela-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #1e3a5f;
+            color: white;
+            padding: 14px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .acoes {
+            white-space: nowrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 7px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 13px;
+            color: white;
+        }
+
+        .btn-editar {
+            background: #0d6efd;
+        }
+
+        .btn-editar:hover {
+            background: #0b5ed7;
+        }
+
+        .btn-excluir {
+            background: #dc3545;
+        }
+
+        .btn-excluir:hover {
+            background: #bb2d3b;
+        }
+
+        .vazio {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+        }
+
+        .contador {
+            padding: 15px 20px;
+            color: #666;
+            font-size: 14px;
+            border-bottom: 1px solid #eee;
+        }
+
+        @media (max-width: 700px) {
+            .topo {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .topo h1 {
+                font-size: 24px;
+            }
+
+            th,
+            td {
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -72,8 +204,9 @@ function classeStatus($status) {
                             <th>Equipamento</th>
                             <th>Tipo de Serviço</th>
                             <th>Técnico</th>
-                            <th>Data</th>
-                            <th>Status</th>
+                            <th>Data Atendimento</th>
+                            <th>Valor</th>
+                            <th>Próxima Visita</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -103,38 +236,44 @@ function classeStatus($status) {
                             </td>
 
                             <td>
-                                <?php
-                                echo !empty($manutencao['tecnico'])
-                                    ? htmlspecialchars($manutencao['tecnico'])
-                                    : '-';
-                                ?>
+                                <?php echo htmlspecialchars($manutencao['tecnico']); ?>
                             </td>
 
                             <td>
                                 <?php
                                 echo date(
                                     'd/m/Y',
-                                    strtotime($manutencao['data_manutencao'])
+                                    strtotime($manutencao['data_atendimento'])
                                 );
                                 ?>
                             </td>
 
                             <td>
-                                <span class="badge-status <?php echo classeStatus($manutencao['status']); ?>">
-                                    <?php echo htmlspecialchars($manutencao['status']); ?>
-                                </span>
+                                <?php
+                                echo !empty($manutencao['valor_cobrado'])
+                                    ? 'R$ ' . number_format($manutencao['valor_cobrado'], 2, ',', '.')
+                                    : '-';
+                                ?>
+                            </td>
+
+                            <td>
+                                <?php
+                                echo !empty($manutencao['proxima_visita'])
+                                    ? date('d/m/Y', strtotime($manutencao['proxima_visita']))
+                                    : '-';
+                                ?>
                             </td>
 
                             <td class="acoes">
 
-                                <a
+                                
                                     href="manutencao_editar.php?id=<?php echo $manutencao['id']; ?>"
                                     class="btn btn-editar"
                                 >
                                     Editar
                                 </a>
 
-                                <a
+                                
                                     href="manutencao_excluir.php?id=<?php echo $manutencao['id']; ?>"
                                     class="btn btn-excluir"
                                     onclick="return confirm('Tem certeza que deseja excluir esta manutenção?');"
