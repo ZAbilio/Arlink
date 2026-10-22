@@ -45,7 +45,6 @@ body {
     border-radius: 12px;
 }
 
-/* ==== TEMA BRANCO E AZUL ==== */
 :root{
   --azul:#2f83f5;
   --azul-escuro:#0f3a68;
@@ -65,7 +64,6 @@ body{
 h1,h2,h3{color:var(--azul-escuro)}
 a{color:var(--azul)}
 
-/* barra do topo */
 .topo{
   background:var(--azul);
   color:#fff;
@@ -74,7 +72,6 @@ a{color:var(--azul)}
   font-weight:bold;
 }
 
-/* botão */
 .btn{
   background:var(--azul);
   color:#fff;
@@ -86,7 +83,6 @@ a{color:var(--azul)}
 }
 .btn:hover{background:var(--azul-escuro)}
 
-/* caixa / card */
 .card{
   background:#fff;
   border:1px solid var(--borda);
@@ -96,7 +92,6 @@ a{color:var(--azul)}
   margin:16px 0;
 }
 
-/* campos do formulário */
 input, textarea, select{
   width:100%;
   padding:11px;
@@ -113,13 +108,11 @@ input:focus, textarea:focus{
   background:#fff;
 }
 
-/* tabela */
 table{width:100%;border-collapse:collapse}
 th{background:var(--azul);color:#fff;padding:10px;text-align:left}
 td{padding:10px;border-bottom:1px solid var(--borda)}
 tr:nth-child(even) td{background:var(--azul-claro)}
 
-/* rodapé */
 .rodape{
   background:var(--azul-escuro);
   color:#fff;
@@ -129,7 +122,6 @@ tr:nth-child(even) td{background:var(--azul-claro)}
   margin-top:24px;
 }
 
-/* tecnicos */
 .badge-especialidade {
     display: inline-block;
     padding: 4px 10px;
@@ -140,7 +132,6 @@ tr:nth-child(even) td{background:var(--azul-claro)}
     font-weight: bold;
 }
 
-/* manutenções */
 .badge-status {
     display: inline-block;
     padding: 4px 10px;
@@ -170,7 +161,6 @@ tr:nth-child(even) td{background:var(--azul-claro)}
     color: #842029;
 }
 
-/* aparelhos */
 .badge-garantia {
     display: inline-block;
     padding: 4px 10px;

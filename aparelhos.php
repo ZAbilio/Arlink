@@ -1,9 +1,6 @@
 <?php
 require_once 'includes/conexao.php';
 
-// A tabela aparelhos só guarda cliente_id, então precisamos JOIN com clientes
-// para exibir o nome. Também removidas data_instalacao e data_garantia,
-// que não existem na tabela — usamos status e proxima_manutencao no lugar.
 $sql = "SELECT 
             a.id, 
             c.nome AS cliente, 
@@ -25,7 +22,6 @@ if (!$resultado) {
     die("Erro ao buscar aparelhos: " . mysqli_error($conexao));
 }
 
-// Classe visual conforme o status cadastrado
 function classeStatus($status) {
     switch (strtolower($status)) {
         case 'em_dia':

@@ -3,7 +3,6 @@ require_once 'includes/conexao.php';
 
 $erro = '';
 
-// Processa o formulário quando enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $cliente_id         = $_POST['cliente_id'];
@@ -49,7 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Busca clientes para o select
 $sqlClientes = "SELECT id, nome FROM clientes ORDER BY nome";
 $resClientes = mysqli_query($conexao, $sqlClientes);
 ?>

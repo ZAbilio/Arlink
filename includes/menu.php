@@ -1,7 +1,4 @@
 <?php
-// Menu superior com atalho para a tela inicial.
-// Para usar em uma página: logo após <body>, adicione:
-//   <?php include 'includes/menu.php'; ?>
 ?>
 <style>
     .arlink-menu {

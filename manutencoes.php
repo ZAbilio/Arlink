@@ -1,7 +1,6 @@
 <?php
 require_once 'includes/conexao.php';
 
-// Busca todas as manutenções, trazendo nomes via JOIN (a tabela só guarda os IDs)
 $sql = "SELECT 
             m.id,
             c.nome AS cliente,

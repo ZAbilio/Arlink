@@ -3,7 +3,6 @@ require_once 'includes/conexao.php';
 
 $erro = '';
 
-// Processa o formulário quando enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $nome     = trim($_POST['nome']);
@@ -15,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erro = "Preencha Nome, E-mail e Senha.";
     } else {
 
-        // Verifica se o e-mail já está cadastrado (a coluna email é UNIQUE)
         $sqlChecagem = "SELECT id FROM tecnicos WHERE email = ?";
         $stmtChecagem = mysqli_prepare($conexao, $sqlChecagem);
         mysqli_stmt_bind_param($stmtChecagem, "s", $email);

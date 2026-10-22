@@ -3,7 +3,6 @@ require_once 'includes/conexao.php';
 
 $erro = '';
 
-// Valida o ID recebido
 $id = isset($_GET['id']) ? (int) $_GET['id'] : (int) ($_POST['id'] ?? 0);
 
 if ($id <= 0) {
@@ -11,7 +10,6 @@ if ($id <= 0) {
     exit;
 }
 
-// Salva as alterações
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome     = trim($_POST['nome'] ?? '');
     $telefone = trim($_POST['telefone'] ?? '');
@@ -40,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_close($stmt);
     }
 
-    // Mantém o que o usuário digitou em caso de erro
     $cliente = [
         'id'       => $id,
         'nome'     => $nome,
@@ -50,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'cidade'   => $cidade,
     ];
 } else {
-    // Busca o cliente para preencher o formulário
     $sql = "SELECT id, nome, telefone, email, endereco, cidade FROM clientes WHERE id = ?";
     $stmt = mysqli_prepare($conexao, $sql);
     mysqli_stmt_bind_param($stmt, 'i', $id);

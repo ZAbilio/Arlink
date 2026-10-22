@@ -3,7 +3,6 @@ require_once 'includes/conexao.php';
 
 $erro = '';
 
-// Processa o formulário quando enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $aparelho_id          = $_POST['aparelho_id'];
@@ -51,14 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Busca aparelhos (com nome do cliente) para o select
 $sqlAparelhos = "SELECT a.id, a.marca, a.modelo, c.nome AS cliente
                  FROM aparelhos a
                  INNER JOIN clientes c ON a.cliente_id = c.id
                  ORDER BY c.nome";
 $resAparelhos = mysqli_query($conexao, $sqlAparelhos);
 
-// Busca técnicos para o select
 $sqlTecnicos = "SELECT id, nome FROM tecnicos ORDER BY nome";
 $resTecnicos = mysqli_query($conexao, $sqlTecnicos);
 ?>

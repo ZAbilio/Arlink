@@ -1,7 +1,6 @@
 <?php
 require_once 'includes/conexao.php';
 
-// Busca todos os clientes
 $sql = "SELECT id, nome, telefone, email, endereco, cidade, criado_em
         FROM clientes
         ORDER BY id DESC";

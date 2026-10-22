@@ -16,7 +16,6 @@ $statusOpcoes = [
     'atrasado' => 'Atrasado',
 ];
 
-// Lista de clientes para o select
 $clientes = [];
 $resClientes = mysqli_query($conexao, "SELECT id, nome FROM clientes ORDER BY nome ASC");
 if ($resClientes) {
@@ -42,7 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($capacidade_btu !== '' && !ctype_digit($capacidade_btu)) {
         $erro = 'A capacidade (BTUs) deve conter apenas números.';
     } else {
-        // Campos opcionais vazios viram NULL no banco
         $tipo               = $tipo !== '' ? $tipo : null;
         $capacidade_btu     = $capacidade_btu !== '' ? (int) $capacidade_btu : null;
         $numero_serie       = $numero_serie !== '' ? $numero_serie : null;
@@ -82,7 +80,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Mantém o que foi digitado em caso de erro
     $aparelho = [
         'id'                 => $id,
         'cliente_id'         => $cliente_id,

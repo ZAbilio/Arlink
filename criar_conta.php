@@ -30,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erro = 'As senhas não coincidem.';
     } else {
 
-        // Verifica se o e-mail já está cadastrado
         $sqlChecagem = "SELECT id FROM tecnicos WHERE email = ?";
         $stmtChecagem = mysqli_prepare($conexao, $sqlChecagem);
         mysqli_stmt_bind_param($stmtChecagem, "s", $email);

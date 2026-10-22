@@ -20,7 +20,6 @@ try {
     header('Location: clientes.php');
     exit;
 } catch (mysqli_sql_exception $e) {
-    // 1451 = cliente vinculado a outros registros (chave estrangeira)
     if ($e->getCode() == 1451) {
         $erro = 'Este cliente não pode ser excluído porque possui registros vinculados (aparelhos, manutenções, etc.). Exclua ou transfira esses registros primeiro.';
     } else {

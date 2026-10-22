@@ -1,10 +1,8 @@
 <?php
 require_once 'includes/conexao.php';
 
-// Página de listagem (ajuste se o nome do seu arquivo for outro)
 $paginaLista = 'tecnicos.php';
 
-// ---------- Valida o ID ----------
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 if (!$id) {
@@ -14,7 +12,6 @@ if (!$id) {
 
 $erros = [];
 
-// ---------- Busca o técnico ----------
 $stmt = mysqli_prepare($conexao, "SELECT id, nome, telefone, email FROM tecnicos WHERE id = ?");
 mysqli_stmt_bind_param($stmt, "i", $id);
 mysqli_stmt_execute($stmt);
@@ -26,7 +23,6 @@ if (!$tecnico) {
     die("Técnico não encontrado.");
 }
 
-// ---------- Processa o envio do formulário ----------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome     = trim($_POST['nome'] ?? '');
     $telefone = trim($_POST['telefone'] ?? '');
@@ -46,13 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erros[] = "Informe um telefone válido.";
     }
 
-    // Mantém o que o usuário digitou caso haja erro
     $tecnico['nome']     = $nome;
     $tecnico['telefone'] = $telefone;
     $tecnico['email']    = $email;
 
     if (empty($erros)) {
-        // Campos vazios viram NULL no banco
         $telefoneDb = $telefone !== '' ? $telefone : null;
         $emailDb    = $email !== '' ? $email : null;
 

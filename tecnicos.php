@@ -1,7 +1,6 @@
 <?php
 require_once 'includes/conexao.php';
 
-// A tabela tecnicos não possui endereco/cidade, por isso não são buscados aqui
 $sql = "SELECT id, nome, telefone, email, criado_em
         FROM tecnicos
         ORDER BY id DESC";

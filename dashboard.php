@@ -8,7 +8,6 @@ if (!isset($_SESSION['tecnico_id'])) {
 
 require_once 'includes/conexao.php';
 
-// Contadores rápidos para o dashboard
 function contar($conexao, $tabela) {
     $sql = "SELECT COUNT(*) AS total FROM $tabela";
     $resultado = mysqli_query($conexao, $sql);
@@ -46,7 +45,6 @@ $totalManutencoes = contar($conexao, 'manutencoes');
             color: #333;
         }
 
-        /* Cabeçalho / Navbar */
         .navbar {
             background: #1e3a5f;
             color: white;
@@ -113,7 +111,6 @@ $totalManutencoes = contar($conexao, 'manutencoes');
             background: rgba(255,255,255,0.25);
         }
 
-        /* Hero */
         .hero {
             background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
             color: white;
@@ -133,14 +130,12 @@ $totalManutencoes = contar($conexao, 'manutencoes');
             margin: 0 auto;
         }
 
-        /* Container geral */
         .container {
             width: 95%;
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        /* Cards de estatística (sobrepõem o hero) */
         .stats {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -169,7 +164,6 @@ $totalManutencoes = contar($conexao, 'manutencoes');
             margin-top: 4px;
         }
 
-        /* Seção de módulos */
         .secao-titulo {
             font-size: 20px;
             color: #1e3a5f;
@@ -243,7 +237,6 @@ $totalManutencoes = contar($conexao, 'manutencoes');
             color: #1e3a5f;
         }
 
-        /* Rodapé */
         footer {
             text-align: center;
             padding: 25px 0;

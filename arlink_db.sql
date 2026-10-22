@@ -1,13 +1,5 @@
 create database if not exists arlink_db;
 use arlink_db;
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Tempo de geração: 14/08/2026 às 04:14
--- Versão do servidor: 10.4.32-MariaDB
--- Versão do PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,16 +10,6 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
-
---
--- Banco de dados: `arlink_db`
---
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `aparelhos`
---
 
 CREATE TABLE `aparelhos` (
   `id` int(11) NOT NULL,
@@ -43,12 +25,6 @@ CREATE TABLE `aparelhos` (
   `criado_em` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `clientes`
---
-
 CREATE TABLE `clientes` (
   `id` int(11) NOT NULL,
   `nome` varchar(100) NOT NULL,
@@ -58,12 +34,6 @@ CREATE TABLE `clientes` (
   `cidade` varchar(80) DEFAULT NULL,
   `criado_em` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `manutencoes`
---
 
 CREATE TABLE `manutencoes` (
   `id` int(11) NOT NULL,
@@ -80,12 +50,6 @@ CREATE TABLE `manutencoes` (
   `criado_em` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `tecnicos`
---
-
 CREATE TABLE `tecnicos` (
   `id` int(11) NOT NULL,
   `nome` varchar(100) NOT NULL,
@@ -95,85 +59,40 @@ CREATE TABLE `tecnicos` (
   `criado_em` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Despejando dados para a tabela `tecnicos`
---
-
 INSERT INTO `tecnicos` (`id`, `nome`, `email`, `senha`, `telefone`, `criado_em`) VALUES
 (1, 'Admin Teste', 'admin@arlink.com', '$2y$10$TZjyDHiIurPwP5qp3uiWFexW5OB0qSBfjzNfErzCjjCjhezSmMAla', '(14) 99999-9999', '2026-08-14 02:11:30');
 
---
--- Índices para tabelas despejadas
---
---
--- Índices de tabela `aparelhos`
---
 ALTER TABLE `aparelhos`
   ADD PRIMARY KEY (`id`),
   ADD KEY `cliente_id` (`cliente_id`);
 
---
--- Índices de tabela `clientes`
---
 ALTER TABLE `clientes`
   ADD PRIMARY KEY (`id`);
 
---
--- Índices de tabela `manutencoes`
---
 ALTER TABLE `manutencoes`
   ADD PRIMARY KEY (`id`),
   ADD KEY `aparelho_id` (`aparelho_id`),
   ADD KEY `tecnico_id` (`tecnico_id`);
 
---
--- Índices de tabela `tecnicos`
---
 ALTER TABLE `tecnicos`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
 
---
--- AUTO_INCREMENT para tabelas despejadas
---
-
---
--- AUTO_INCREMENT de tabela `aparelhos`
---
 ALTER TABLE `aparelhos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de tabela `clientes`
---
 ALTER TABLE `clientes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de tabela `manutencoes`
---
 ALTER TABLE `manutencoes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de tabela `tecnicos`
---
 ALTER TABLE `tecnicos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
---
--- Restrições para tabelas despejadas
---
-
---
--- Restrições para tabelas `aparelhos`
---
 ALTER TABLE `aparelhos`
   ADD CONSTRAINT `aparelhos_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`);
 
---
--- Restrições para tabelas `manutencoes`
---
 ALTER TABLE `manutencoes`
   ADD CONSTRAINT `manutencoes_ibfk_1` FOREIGN KEY (`aparelho_id`) REFERENCES `aparelhos` (`id`),
   ADD CONSTRAINT `manutencoes_ibfk_2` FOREIGN KEY (`tecnico_id`) REFERENCES `tecnicos` (`id`);

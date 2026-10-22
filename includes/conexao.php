@@ -111,9 +111,6 @@ VALUES
 ('Patrícia Rodrigues', '(14) 99012-3456', 'patricia.rodrigues@email.com', 'Rua Goiás, 520', 'Bauru')";
 
 
-//mysqli_query($conexao, $sql) or die(mysqli_error($conexao));
-
-
 $charset = 'utf8mb4';
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [
