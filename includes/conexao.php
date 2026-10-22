@@ -90,7 +90,7 @@ VALUES
     (
         'Admin',
         'admin@arlink.com',
-        '\$2y\$10\$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uZutLtChG',
+        '\$2y\$10\$TZjyDHiIurPwP5qp3uiWFexW5OB0qSBfjzNfErzCjjCjhezSmMAla',
         '(14) 99999-9999'
     )";
 

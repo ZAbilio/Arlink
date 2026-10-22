@@ -100,12 +100,11 @@ CREATE TABLE `tecnicos` (
 --
 
 INSERT INTO `tecnicos` (`id`, `nome`, `email`, `senha`, `telefone`, `criado_em`) VALUES
-(1, 'Admin Teste', 'admin@arlink.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uZutLtChG', '(14) 99999-9999', '2026-08-14 02:11:30');
+(1, 'Admin Teste', 'admin@arlink.com', '$2y$10$TZjyDHiIurPwP5qp3uiWFexW5OB0qSBfjzNfErzCjjCjhezSmMAla', '(14) 99999-9999', '2026-08-14 02:11:30');
 
 --
 -- Índices para tabelas despejadas
 --
-
 --
 -- Índices de tabela `aparelhos`
 --
