@@ -198,6 +198,8 @@ $resClientes = mysqli_query($conexao, $sqlClientes);
 
 <body>
 
+<?php include 'includes/menu.php'; ?>
+
 <div class="container">
 
     <div class="topo">

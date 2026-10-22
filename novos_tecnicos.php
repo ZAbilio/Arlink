@@ -186,6 +186,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
 
+<?php include 'includes/menu.php'; ?>
+
 <div class="container">
 
     <div class="topo">

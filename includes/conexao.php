@@ -110,7 +110,8 @@ VALUES
 ('Ricardo Ferreira', '(14) 99901-2345', 'ricardo.ferreira@email.com', 'Rua Pernambuco, 145', 'Bauru'),
 ('Patrícia Rodrigues', '(14) 99012-3456', 'patricia.rodrigues@email.com', 'Rua Goiás, 520', 'Bauru')";
 
-mysqli_query($conexao, $sql) or die(mysqli_error($conexao));
+
+//mysqli_query($conexao, $sql) or die(mysqli_error($conexao));
 
 
 $charset = 'utf8mb4';
