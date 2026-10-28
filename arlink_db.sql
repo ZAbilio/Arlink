@@ -1,103 +1,81 @@
-create database if not exists arlink_db;
-use arlink_db;
+CREATE DATABASE IF NOT EXISTS arlink_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE arlink_db;
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+CREATE TABLE IF NOT EXISTS tecnicos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  senha VARCHAR(255) NOT NULL,
+  telefone VARCHAR(20),
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
+CREATE TABLE IF NOT EXISTS clientes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL,
+  telefone VARCHAR(20) NOT NULL,
+  email VARCHAR(100),
+  endereco VARCHAR(200),
+  cidade VARCHAR(80),
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+CREATE TABLE IF NOT EXISTS aparelhos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  cliente_id INT NOT NULL,
+  marca VARCHAR(50) NOT NULL,
+  modelo VARCHAR(100) NOT NULL,
+  numero_serie VARCHAR(100),
+  capacidade_btu VARCHAR(20),
+  tipo VARCHAR(30),
+  status VARCHAR(20) DEFAULT 'em_dia',
+  proxima_manutencao DATE,
+  observacoes TEXT,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
+);
 
-CREATE TABLE `aparelhos` (
-  `id` int(11) NOT NULL,
-  `cliente_id` int(11) NOT NULL,
-  `marca` varchar(50) NOT NULL,
-  `modelo` varchar(100) NOT NULL,
-  `numero_serie` varchar(100) DEFAULT NULL,
-  `capacidade_btu` varchar(20) DEFAULT NULL,
-  `tipo` varchar(30) DEFAULT NULL,
-  `status` varchar(20) DEFAULT 'em_dia',
-  `proxima_manutencao` date DEFAULT NULL,
-  `observacoes` text DEFAULT NULL,
-  `criado_em` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS manutencoes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  aparelho_id INT NOT NULL,
+  tecnico_id INT NOT NULL,
+  data_atendimento DATE NOT NULL,
+  tipo_servico VARCHAR(50) NOT NULL,
+  diagnostico TEXT NOT NULL,
+  servico_realizado TEXT NOT NULL,
+  pecas_utilizadas TEXT,
+  valor_cobrado DECIMAL(10,2),
+  proxima_visita DATE,
+  observacoes_internas TEXT,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (aparelho_id) REFERENCES aparelhos(id) ON DELETE CASCADE,
+  FOREIGN KEY (tecnico_id) REFERENCES tecnicos(id)
+);
 
-CREATE TABLE `clientes` (
-  `id` int(11) NOT NULL,
-  `nome` varchar(100) NOT NULL,
-  `telefone` varchar(20) NOT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `endereco` varchar(200) DEFAULT NULL,
-  `cidade` varchar(80) DEFAULT NULL,
-  `criado_em` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Usuario inicial para DEMONSTRACAO LOCAL: admin@arlink.com / admin123
+-- Em um computador publico, altere a senha depois do primeiro acesso.
+-- Reimportar preserva a senha de um administrador ja existente.
+INSERT INTO tecnicos (nome,email,senha,telefone) VALUES
+('Administrador','admin@arlink.com','$2y$12$gvNoa2818DdIQaUgFjkoVut/hXcS5hKF68Y/8rul6N0CqCghy4GT.','(14) 99999-9999')
+ON DUPLICATE KEY UPDATE email = email;
 
-CREATE TABLE `manutencoes` (
-  `id` int(11) NOT NULL,
-  `aparelho_id` int(11) NOT NULL,
-  `tecnico_id` int(11) NOT NULL,
-  `data_atendimento` date NOT NULL,
-  `tipo_servico` varchar(50) NOT NULL,
-  `diagnostico` text NOT NULL,
-  `servico_realizado` text NOT NULL,
-  `pecas_utilizadas` text DEFAULT NULL,
-  `valor_cobrado` decimal(10,2) DEFAULT NULL,
-  `proxima_visita` date DEFAULT NULL,
-  `observacoes_internas` text DEFAULT NULL,
-  `criado_em` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Dados de exemplo ficticios para apresentacao. Importacao repetida nao deve duplicar registros.
+-- Clientes de exemplo
+INSERT IGNORE INTO clientes (id,nome,telefone,email,endereco,cidade) VALUES
+(1,'Joao da Silva','(14) 99123-4567','joao@email.com','Rua das Flores, 120','Bauru'),
+(2,'Maria Oliveira','(14) 99234-5678','maria@email.com','Av. Brasil, 450','Bauru'),
+(3,'Carlos Santos','(14) 99345-6789','carlos@email.com','Rua Sao Paulo, 85','Bauru');
 
-CREATE TABLE `tecnicos` (
-  `id` int(11) NOT NULL,
-  `nome` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `senha` varchar(255) NOT NULL,
-  `telefone` varchar(20) DEFAULT NULL,
-  `criado_em` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Aparelhos de exemplo
+INSERT IGNORE INTO aparelhos (id,cliente_id,marca,modelo,numero_serie,capacidade_btu,tipo,status,proxima_manutencao) VALUES
+(1,1,'Elgin','Hi Wall Eco','ELG-2024-001','12000','Split Hi Wall','em_dia',DATE_ADD(CURDATE(), INTERVAL 15 DAY)),
+(2,2,'Midea','Liva Inverter','MID-2023-042','9000','Split Hi Wall','atencao',DATE_ADD(CURDATE(), INTERVAL 7 DAY)),
+(3,3,'Daikin','FTF12','DAI-2022-118','12000','Split Hi Wall','urgente',DATE_ADD(CURDATE(), INTERVAL 2 DAY));
 
-INSERT INTO `tecnicos` (`id`, `nome`, `email`, `senha`, `telefone`, `criado_em`) VALUES
-(1, 'Admin Teste', 'admin@arlink.com', '$2y$10$TZjyDHiIurPwP5qp3uiWFexW5OB0qSBfjzNfErzCjjCjhezSmMAla', '(14) 99999-9999', '2026-08-14 02:11:30');
+SET @admin_demo = (SELECT id FROM tecnicos WHERE email='admin@arlink.com');
 
-ALTER TABLE `aparelhos`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `cliente_id` (`cliente_id`);
-
-ALTER TABLE `clientes`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `manutencoes`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `aparelho_id` (`aparelho_id`),
-  ADD KEY `tecnico_id` (`tecnico_id`);
-
-ALTER TABLE `tecnicos`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
-
-ALTER TABLE `aparelhos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE `manutencoes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE `tecnicos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
-ALTER TABLE `aparelhos`
-  ADD CONSTRAINT `aparelhos_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`);
-
-ALTER TABLE `manutencoes`
-  ADD CONSTRAINT `manutencoes_ibfk_1` FOREIGN KEY (`aparelho_id`) REFERENCES `aparelhos` (`id`),
-  ADD CONSTRAINT `manutencoes_ibfk_2` FOREIGN KEY (`tecnico_id`) REFERENCES `tecnicos` (`id`);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- Manutencoes de exemplo
+INSERT IGNORE INTO manutencoes (id,aparelho_id,tecnico_id,data_atendimento,tipo_servico,diagnostico,servico_realizado,pecas_utilizadas,valor_cobrado,proxima_visita) VALUES
+(1,1,@admin_demo,DATE_SUB(CURDATE(),INTERVAL 80 DAY),'Preventiva','Filtros com acumulo de poeira. Funcionamento normal.','Limpeza completa dos filtros e serpentina.','Nenhuma peca substituida',150.00,DATE_ADD(CURDATE(),INTERVAL 15 DAY)),
+(2,2,@admin_demo,DATE_SUB(CURDATE(),INTERVAL 60 DAY),'Corretiva','Capacitor do compressor com falha.','Substituicao do capacitor.','Capacitor 40+5 MFD',280.00,DATE_ADD(CURDATE(),INTERVAL 7 DAY)),
+(3,3,@admin_demo,DATE_SUB(CURDATE(),INTERVAL 35 DAY),'Preventiva','Pequeno acumulo de limo.','Higienizacao completa.','Produto higienizante',180.00,DATE_ADD(CURDATE(),INTERVAL 2 DAY));

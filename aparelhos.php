@@ -1,355 +1,50 @@
 <?php
-require_once 'includes/conexao.php';
-
-$sql = "SELECT 
-            a.id, 
-            c.nome AS cliente, 
-            a.marca, 
-            a.modelo, 
-            a.tipo, 
-            a.capacidade_btu, 
-            a.numero_serie, 
-            a.status,
-            a.proxima_manutencao,
-            a.criado_em
-        FROM aparelhos a
-        INNER JOIN clientes c ON a.cliente_id = c.id
-        ORDER BY a.id DESC";
-
-$resultado = mysqli_query($conexao, $sql);
-
-if (!$resultado) {
-    die("Erro ao buscar aparelhos: " . mysqli_error($conexao));
-}
-
-function classeStatus($status) {
-    switch (strtolower($status)) {
-        case 'em_dia':
-            return ['texto' => 'Em dia', 'classe' => 'status-em-dia'];
-        case 'atrasado':
-            return ['texto' => 'Atrasado', 'classe' => 'status-atrasado'];
-        case 'pendente':
-            return ['texto' => 'Pendente', 'classe' => 'status-pendente'];
-        default:
-            return ['texto' => $status, 'classe' => ''];
-    }
-}
+require_once 'includes/config.php'; require_once 'includes/sessao.php'; require_once 'includes/conexao.php';
+$titulo='Aparelhos'; $cid=(int)($_GET['cliente_id']??0); $sucesso=$_GET['sucesso']??'';
+$where=$cid>0?"WHERE a.cliente_id=$cid":'';
+$res=mysqli_query($conexao,"SELECT a.*,c.nome AS cn FROM aparelhos a JOIN clientes c ON c.id=a.cliente_id $where ORDER BY c.nome,a.marca");
+$nc='';
+if ($cid>0){$r=mysqli_query($conexao,"SELECT nome FROM clientes WHERE id=$cid LIMIT 1");$nc=mysqli_fetch_row($r)[0]??'';}
+function bs($s){$m=['em_dia'=>['Em dia','badge-verde'],'atencao'=>['Atenção','badge-amarelo'],'urgente'=>['Urgente','badge-vermelho']];$d=$m[$s]??[$s,'badge-cinza'];return '<span class="badge '.$d[1].'">'.htmlspecialchars($d[0]).'</span>';}
+require_once 'includes/header.php';
 ?>
-
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Aparelhos - AR Link</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            color: #333;
-        }
-
-        .container {
-            width: 95%;
-            max-width: 1200px;
-            margin: 40px auto;
-        }
-
-        .topo {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .topo h1 {
-            color: #1e3a5f;
-            font-size: 28px;
-        }
-
-        .btn-novo {
-            background: #198754;
-            color: white;
-            text-decoration: none;
-            padding: 12px 18px;
-            border-radius: 6px;
-            font-weight: bold;
-        }
-
-        .btn-novo:hover {
-            background: #157347;
-        }
-
-        .card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-
-        .tabela-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background: #1e3a5f;
-            color: white;
-            padding: 14px;
-            text-align: left;
-            font-size: 14px;
-        }
-
-        td {
-            padding: 13px;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
-        }
-
-        tr:hover {
-            background: #f8f9fa;
-        }
-
-        .acoes {
-            white-space: nowrap;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 7px 10px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 13px;
-            color: white;
-        }
-
-        .btn-editar {
-            background: #0d6efd;
-        }
-
-        .btn-editar:hover {
-            background: #0b5ed7;
-        }
-
-        .btn-excluir {
-            background: #dc3545;
-        }
-
-        .btn-excluir:hover {
-            background: #bb2d3b;
-        }
-
-        .vazio {
-            text-align: center;
-            padding: 40px;
-            color: #777;
-        }
-
-        .contador {
-            padding: 15px 20px;
-            color: #666;
-            font-size: 14px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .badge-status {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .status-em-dia {
-            background: #d1e7dd;
-            color: #0f5132;
-        }
-
-        .status-atrasado {
-            background: #f8d7da;
-            color: #842029;
-        }
-
-        .status-pendente {
-            background: #fff3cd;
-            color: #664d03;
-        }
-
-        @media (max-width: 700px) {
-            .topo {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-            .topo h1 {
-                font-size: 24px;
-            }
-
-            th,
-            td {
-                padding: 10px;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-<?php include 'includes/menu.php'; ?>
-
 <div class="container">
-
-    <div class="topo">
-        <h1>Aparelhos</h1>
-
-        <a href="novos_aparelhos.php" class="btn-novo">
-            + Novo Aparelho
-        </a>
+  <div class="page-topo">
+    <div><h1>Aparelhos<?php echo $nc?' — '.htmlspecialchars($nc):''; ?></h1><p>Ar-condicionados cadastrados.</p></div>
+    <div class="acoes">
+      <?php if ($cid>0): ?><a href="aparelhos.php" class="btn btn-cinza">Ver todos</a><?php endif; ?>
+      <a href="aparelho_form.php<?php echo $cid?"?cliente_id=$cid":''; ?>" class="btn btn-verde">+ Novo Aparelho</a>
     </div>
-
-    <div class="card">
-
-        <div class="contador">
-            <?php echo mysqli_num_rows($resultado); ?>
-            aparelho(s) cadastrado(s)
-        </div>
-
-        <div class="tabela-container">
-
-            <?php if (mysqli_num_rows($resultado) > 0): ?>
-
-                <table>
-
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Cliente</th>
-                            <th>Marca / Modelo</th>
-                            <th>Tipo</th>
-                            <th>BTUs</th>
-                            <th>Nº de Série</th>
-                            <th>Status</th>
-                            <th>Próxima Manutenção</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                    <?php while ($aparelho = mysqli_fetch_assoc($resultado)): ?>
-
-                        <?php $status = classeStatus($aparelho['status']); ?>
-
-                        <tr>
-
-                            <td>
-                                <?php echo $aparelho['id']; ?>
-                            </td>
-
-                            <td>
-                                <strong>
-                                    <?php echo htmlspecialchars($aparelho['cliente']); ?>
-                                </strong>
-                            </td>
-
-                            <td>
-                                <?php echo htmlspecialchars($aparelho['marca']); ?>
-                                -
-                                <?php echo htmlspecialchars($aparelho['modelo']); ?>
-                            </td>
-
-                            <td>
-                                <?php
-                                echo !empty($aparelho['tipo'])
-                                    ? htmlspecialchars($aparelho['tipo'])
-                                    : '-';
-                                ?>
-                            </td>
-
-                            <td>
-                                <?php
-                                echo !empty($aparelho['capacidade_btu'])
-                                    ? htmlspecialchars($aparelho['capacidade_btu']) . ' BTUs'
-                                    : '-';
-                                ?>
-                            </td>
-
-                            <td>
-                                <?php
-                                echo !empty($aparelho['numero_serie'])
-                                    ? htmlspecialchars($aparelho['numero_serie'])
-                                    : '-';
-                                ?>
-                            </td>
-
-                            <td>
-                                <span class="badge-status <?php echo $status['classe']; ?>">
-                                    <?php echo htmlspecialchars($status['texto']); ?>
-                                </span>
-                            </td>
-
-                            <td>
-                                <?php
-                                echo !empty($aparelho['proxima_manutencao'])
-                                    ? date('d/m/Y', strtotime($aparelho['proxima_manutencao']))
-                                    : '-';
-                                ?>
-                            </td>
-
-                            <td class="acoes">
-
-                                <a
-                                    href="aparelho_editar.php?id=<?php echo $aparelho['id']; ?>"
-                                    class="btn btn-editar"
-                                >
-                                    Editar
-                                </a>
-
-                                <a
-                                    href="aparelho_excluir.php?id=<?php echo $aparelho['id']; ?>"
-                                    class="btn btn-excluir"
-                                    onclick="return confirm('Tem certeza que deseja excluir este aparelho?');"
-                                >
-                                    Excluir
-                                </a>
-
-                            </td>
-
-                        </tr>
-
-                    <?php endwhile; ?>
-
-                    </tbody>
-
-                </table>
-
-            <?php else: ?>
-
-                <div class="vazio">
-                    <h3>Nenhum aparelho cadastrado</h3>
-                    <p>Comece cadastrando um novo aparelho.</p>
-                </div>
-
-            <?php endif; ?>
-
-        </div>
-
+  </div>
+  <?php if ($sucesso==='criado'): ?><div class="alerta alerta-sucesso">✅ Aparelho cadastrado!</div>
+  <?php elseif ($sucesso==='editado'): ?><div class="alerta alerta-sucesso">✅ Aparelho atualizado!</div>
+  <?php elseif ($sucesso==='excluido'): ?><div class="alerta alerta-sucesso">✅ Aparelho excluído!</div><?php endif; ?>
+  <div class="card">
+    <div class="contador"><?php echo mysqli_num_rows($res); ?> aparelho(s)</div>
+    <div class="tabela-container">
+      <?php if (mysqli_num_rows($res)>0): ?>
+      <table><thead><tr><th>#</th><th>Marca/Modelo</th><th>Cliente</th><th>Tipo</th><th>BTU</th><th>Nº Série</th><th>Status</th><th>Próx. Manutenção</th><th>Ações</th></tr></thead>
+      <tbody>
+      <?php while ($a=mysqli_fetch_assoc($res)): ?>
+        <tr>
+          <td><?php echo $a['id']; ?></td>
+          <td><strong><?php echo htmlspecialchars($a['marca']); ?></strong><br><small><?php echo htmlspecialchars($a['modelo']); ?></small></td>
+          <td><?php echo htmlspecialchars($a['cn']); ?></td>
+          <td><?php echo $a['tipo']?htmlspecialchars($a['tipo']):'-'; ?></td>
+          <td><?php echo $a['capacidade_btu']?htmlspecialchars($a['capacidade_btu']):'-'; ?></td>
+          <td><?php echo $a['numero_serie']?htmlspecialchars($a['numero_serie']):'-'; ?></td>
+          <td><?php echo bs($a['status']); ?></td>
+          <td><?php if ($a['proxima_manutencao']){$d=strtotime($a['proxima_manutencao']);$diff=($d-strtotime('today'))/86400;$cor=$diff<0?'color:red':($diff<=7?'color:orange':'');echo '<span style="'.$cor.'">'.date('d/m/Y',$d).'</span>';}else echo '-'; ?></td>
+          <td class="acoes">
+            <a href="historico.php?aparelho_id=<?php echo $a['id']; ?>" class="btn btn-cinza">Histórico</a>
+            <a href="aparelho_form.php?id=<?php echo $a['id']; ?>" class="btn btn-primario">Editar</a>
+            <form action="aparelho_excluir.php" method="POST" onsubmit="return confirm('Excluir este aparelho e TODO seu historico?')" class="form-excluir"><input type="hidden" name="id" value="<?php echo $a['id']; ?>"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(token_formulario()); ?>"><button type="submit" class="btn btn-vermelho">Excluir</button></form>
+          </td>
+        </tr>
+      <?php endwhile; ?>
+      </tbody></table>
+      <?php else: ?><div class="vazio"><h3>Nenhum aparelho</h3><p>Clique em "+ Novo Aparelho".</p></div><?php endif; ?>
     </div>
-
+  </div>
 </div>
-
-</body>
-</html>
+<?php require_once 'includes/footer.php'; ?>
