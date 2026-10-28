@@ -1,0 +1,8 @@
+Options -Indexes
+<FilesMatch "(?i)\.(sql|md|bat|zip|bak|log|ini|env|json|py|ps1|sqlite)(\..*)?$">
+    Require all denied
+</FilesMatch>
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+RedirectMatch 403 (?i)/(backups|backup|\.git|\.tmp[^/]*)(/|$)

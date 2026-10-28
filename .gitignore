@@ -1,0 +1,13 @@
+﻿/APRESENTACAO/
+/backups/
+/.tmp*/
+/*.zip
+*.log
+.env
+.env.*
+/TESTES*.md
+/RELATORIO*.md
+/ALTERACOES*.md
+/DOCUMENTACAO.md
+/README_INSTALACAO.md
+/corrigir_login_admin.sql

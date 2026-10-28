@@ -1,298 +1,48 @@
 <?php
+require_once 'includes/config.php';
+require_once 'includes/sessao.php';
 require_once 'includes/conexao.php';
-
-$sql = "SELECT id, nome, telefone, email, endereco, cidade, criado_em
-        FROM clientes
-        ORDER BY id DESC";
-
-$resultado = mysqli_query($conexao, $sql);
-
-if (!$resultado) {
-    die("Erro ao buscar clientes: " . mysqli_error($conexao));
-}
+$titulo  = 'Clientes';
+$sucesso = $_GET['sucesso'] ?? '';
+$res = mysqli_query($conexao,
+  "SELECT c.id,c.nome,c.telefone,c.email,c.cidade,c.criado_em,COUNT(a.id) AS total
+   FROM clientes c LEFT JOIN aparelhos a ON a.cliente_id=c.id
+   GROUP BY c.id ORDER BY c.nome ASC");
+require_once 'includes/header.php';
 ?>
-
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Clientes - AR Link</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            color: #333;
-        }
-
-        .container {
-            width: 95%;
-            max-width: 1200px;
-            margin: 40px auto;
-        }
-
-        .topo {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .topo h1 {
-            color: #1e3a5f;
-            font-size: 28px;
-        }
-
-        .btn-novo {
-            background: #198754;
-            color: white;
-            text-decoration: none;
-            padding: 12px 18px;
-            border-radius: 6px;
-            font-weight: bold;
-        }
-
-        .btn-novo:hover {
-            background: #157347;
-        }
-
-        .card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-
-        .tabela-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background: #1e3a5f;
-            color: white;
-            padding: 14px;
-            text-align: left;
-            font-size: 14px;
-        }
-
-        td {
-            padding: 13px;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
-        }
-
-        tr:hover {
-            background: #f8f9fa;
-        }
-
-        .acoes {
-            white-space: nowrap;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 7px 10px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 13px;
-            color: white;
-        }
-
-        .btn-editar {
-            background: #0d6efd;
-        }
-
-        .btn-editar:hover {
-            background: #0b5ed7;
-        }
-
-        .btn-excluir {
-            background: #dc3545;
-        }
-
-        .btn-excluir:hover {
-            background: #bb2d3b;
-        }
-
-        .vazio {
-            text-align: center;
-            padding: 40px;
-            color: #777;
-        }
-
-        .contador {
-            padding: 15px 20px;
-            color: #666;
-            font-size: 14px;
-            border-bottom: 1px solid #eee;
-        }
-
-        @media (max-width: 700px) {
-            .topo {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-            .topo h1 {
-                font-size: 24px;
-            }
-
-            th,
-            td {
-                padding: 10px;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-<?php include 'includes/menu.php'; ?>
-
 <div class="container">
-
-    <div class="topo">
-        <h1>Clientes</h1>
-
-        <a href="cliente_cadastro.php" class="btn-novo">
-            + Novo Cliente
-        </a>
+  <div class="page-topo">
+    <div><h1>Clientes</h1><p>Gerencie os clientes cadastrados.</p></div>
+    <a href="cliente_form.php" class="btn btn-verde">+ Novo Cliente</a>
+  </div>
+  <?php if ($sucesso==='criado'): ?><div class="alerta alerta-sucesso">✅ Cliente cadastrado!</div>
+  <?php elseif ($sucesso==='editado'): ?><div class="alerta alerta-sucesso">✅ Cliente atualizado!</div>
+  <?php elseif ($sucesso==='excluido'): ?><div class="alerta alerta-sucesso">✅ Cliente excluído!</div><?php endif; ?>
+  <div class="card">
+    <div class="contador"><?php echo mysqli_num_rows($res); ?> cliente(s)</div>
+    <div class="tabela-container">
+      <?php if (mysqli_num_rows($res)>0): ?>
+      <table><thead><tr><th>#</th><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Cidade</th><th>Aparelhos</th><th>Cadastro</th><th>Ações</th></tr></thead>
+      <tbody>
+      <?php while ($c=mysqli_fetch_assoc($res)): ?>
+        <tr>
+          <td><?php echo $c['id']; ?></td>
+          <td><strong><?php echo htmlspecialchars($c['nome']); ?></strong></td>
+          <td><?php echo htmlspecialchars($c['telefone']); ?></td>
+          <td><?php echo $c['email'] ? htmlspecialchars($c['email']) : '-'; ?></td>
+          <td><?php echo $c['cidade'] ? htmlspecialchars($c['cidade']) : '-'; ?></td>
+          <td><span class="badge badge-azul"><?php echo $c['total']; ?></span></td>
+          <td><?php echo date('d/m/Y',strtotime($c['criado_em'])); ?></td>
+          <td class="acoes">
+            <a href="aparelhos.php?cliente_id=<?php echo $c['id']; ?>" class="btn btn-cinza">Aparelhos</a>
+            <a href="cliente_form.php?id=<?php echo $c['id']; ?>" class="btn btn-primario">Editar</a>
+            <form action="cliente_excluir.php" method="POST" onsubmit="return confirm('Excluir este cliente e TODOS os seus aparelhos e manutencoes?')" class="form-excluir"><input type="hidden" name="id" value="<?php echo $c['id']; ?>"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(token_formulario()); ?>"><button type="submit" class="btn btn-vermelho">Excluir</button></form>
+          </td>
+        </tr>
+      <?php endwhile; ?>
+      </tbody></table>
+      <?php else: ?><div class="vazio"><h3>Nenhum cliente</h3><p>Clique em "+ Novo Cliente".</p></div><?php endif; ?>
     </div>
-
-    <div class="card">
-
-        <div class="contador">
-            <?php echo mysqli_num_rows($resultado); ?>
-            cliente(s) cadastrado(s)
-        </div>
-
-        <div class="tabela-container">
-
-            <?php if (mysqli_num_rows($resultado) > 0): ?>
-
-                <table>
-
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Telefone</th>
-                            <th>E-mail</th>
-                            <th>Endereço</th>
-                            <th>Cidade</th>
-                            <th>Cadastro</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                    <?php while ($cliente = mysqli_fetch_assoc($resultado)): ?>
-
-                        <tr>
-
-                            <td>
-                                <?php echo $cliente['id']; ?>
-                            </td>
-
-                            <td>
-                                <strong>
-                                    <?php echo htmlspecialchars($cliente['nome']); ?>
-                                </strong>
-                            </td>
-
-                            <td>
-                                <?php echo htmlspecialchars($cliente['telefone']); ?>
-                            </td>
-
-                            <td>
-                                <?php
-                                echo !empty($cliente['email'])
-                                    ? htmlspecialchars($cliente['email'])
-                                    : '-';
-                                ?>
-                            </td>
-
-                            <td>
-                                <?php
-                                echo !empty($cliente['endereco'])
-                                    ? htmlspecialchars($cliente['endereco'])
-                                    : '-';
-                                ?>
-                            </td>
-
-                            <td>
-                                <?php
-                                echo !empty($cliente['cidade'])
-                                    ? htmlspecialchars($cliente['cidade'])
-                                    : '-';
-                                ?>
-                            </td>
-
-                            <td>
-                                <?php
-                                echo date(
-                                    'd/m/Y H:i',
-                                    strtotime($cliente['criado_em'])
-                                );
-                                ?>
-                            </td>
-
-                            <td class="acoes">
-
-                                <a
-                                    href="cliente_editar.php?id=<?php echo $cliente['id']; ?>"
-                                    class="btn btn-editar"
-                                >
-                                    Editar
-                                </a>
-
-                                <a
-                                    href="cliente_excluir.php?id=<?php echo $cliente['id']; ?>"
-                                    class="btn btn-excluir"
-                                    onclick="return confirm('Tem certeza que deseja excluir este cliente?');"
-                                >
-                                    Excluir
-                                </a>
-
-                            </td>
-
-                        </tr>
-
-                    <?php endwhile; ?>
-
-                    </tbody>
-
-                </table>
-
-            <?php else: ?>
-
-                <div class="vazio">
-                    <h3>Nenhum cliente cadastrado</h3>
-                    <p>Comece cadastrando um novo cliente.</p>
-                </div>
-
-            <?php endif; ?>
-
-        </div>
-
-    </div>
-
+  </div>
 </div>
-
-</body>
-</html>
+<?php require_once 'includes/footer.php'; ?>
